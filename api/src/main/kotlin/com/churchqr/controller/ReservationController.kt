@@ -3,6 +3,7 @@ package com.churchqr.controller
 import com.churchqr.model.Reservation
 import com.churchqr.service.ReservationService
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -26,13 +27,13 @@ class ReservationController(private val reservationService: ReservationService) 
 
 
     @PostMapping("/v1/reservation")
-    fun post(@Valid @RequestBody requestDto: ReserveRequestDto) : Reservation {
-        return reservationService.reserve(requestDto.mobileNo, requestDto.email, requestDto.firstName, requestDto.lastName, requestDto.birthday)
+    fun post(@Valid @RequestBody requestDto: ReserveRequestDto) : ResponseEntity<Reservation> {
+        return ResponseEntity.status(HttpStatus.OK).body(reservationService.reserve(requestDto.mobileNo, requestDto.email, requestDto.firstName, requestDto.lastName, requestDto.birthday))
     }
 
     @GetMapping("/v1/reservation")
-    fun get(@RequestParam @Valid @NotNull id: UUID) {
-
+    fun get(@RequestParam @Valid @NotNull id: UUID) : ResponseEntity<Reservation> {
+        return ResponseEntity.status(HttpStatus.OK).body(reservationService.scan(id))
     }
 
 }
