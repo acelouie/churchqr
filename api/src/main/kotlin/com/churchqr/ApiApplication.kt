@@ -1,4 +1,4 @@
-package com.churchqr.api
+package com.churchqr
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

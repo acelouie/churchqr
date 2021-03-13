@@ -1,4 +1,4 @@
-package com.churchqr.api
+package com.churchqr
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
