@@ -1,20 +1,37 @@
 package com.churchqr.controller
 
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RestController
+import com.churchqr.model.Reservation
+import com.churchqr.service.ReservationService
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import java.util.*
+import javax.validation.Valid
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Pattern
+import javax.validation.constraints.Size
 
 @CrossOrigin
 @RestController
-class ReservationController : BaseController() {
+class ReservationController(private val reservationService: ReservationService) {
 
-    @PostMapping("/v1/reservation/reserve")
-    fun reserve() {
+    data class ReserveRequestDto(
+        @NotNull @Pattern(regexp = "^(09)\\d{9}") val mobileNo: String,
+        @NotNull @Email @Size(min=1,max=50) val email: String,
+        @NotNull @Size(min=1,max=50) val firstName: String,
+        @NotNull @Size(min=1, max=50) val lastName: String,
+        @DateTimeFormat(pattern = "yyyy-MM-dd") val birthday: String
+    )
 
+
+    @PostMapping("/v1/reservation")
+    fun post(@Valid @RequestBody requestDto: ReserveRequestDto) : Reservation {
+        return reservationService.reserve(requestDto.mobileNo, requestDto.email, requestDto.firstName, requestDto.lastName, requestDto.birthday)
     }
 
-    @PostMapping("/v1/reservation/scan")
-    fun scan() {
+    @GetMapping("/v1/reservation")
+    fun get(@RequestParam @Valid @NotNull id: UUID) {
 
     }
 

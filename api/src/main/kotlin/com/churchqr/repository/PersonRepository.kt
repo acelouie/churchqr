@@ -6,6 +6,6 @@ import java.util.*
 
 interface PersonRepository : JpaRepository<Person, UUID> {
 
-    fun findByMobileNo(mobileNo : String) : Person
+    fun findByMobileNo(mobileNo : String) : Person?
 
 }
