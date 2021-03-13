@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
@@ -32,7 +31,7 @@ class ReservationController(private val reservationService: ReservationService) 
     }
 
     @GetMapping("/v1/reservation")
-    fun get(@RequestParam @Valid @NotNull id: UUID) : ResponseEntity<Reservation> {
+    fun get(@RequestParam @Valid @NotNull id: String) : ResponseEntity<Reservation> {
         return ResponseEntity.status(HttpStatus.OK).body(reservationService.scan(id))
     }
 

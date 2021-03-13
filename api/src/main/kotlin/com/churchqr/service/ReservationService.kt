@@ -10,9 +10,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.lang.Exception
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
+import java.time.format.DateTimeFormatter
 
 @Service
 class ReservationService(
@@ -34,12 +35,15 @@ class ReservationService(
             throw Exception("Event attendance limit reached")
         }
 
+        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        val convertedBirthday: LocalDate = LocalDate.parse(birthday, dtf)
+
         var dbPerson: Person? = personRepository.findByMobileNo(mobileNo)
         var person = if(dbPerson != null) {
-            val updatedPerson: Person = dbPerson.copy(email = email, firstName = firstName, lastName =  lastName, birthday = birthday)
+            val updatedPerson: Person = dbPerson.copy(email = email, firstName = firstName, lastName =  lastName, birthday = convertedBirthday)
             personRepository.save(updatedPerson)
         } else {
-            val newPerson = Person(UUID.randomUUID(), mobileNo, email, firstName, lastName, birthday)
+            val newPerson = Person(null, mobileNo, email, firstName, lastName, convertedBirthday)
             personRepository.save(newPerson)
         }
 
@@ -47,13 +51,13 @@ class ReservationService(
         val instant: Instant = localCurrentTime.atZone(ZoneId.systemDefault()).toInstant()
         val currentTime = instant.toEpochMilli()
 
-        var newReservation = Reservation(UUID.randomUUID(), person, currentEvent, currentTime, null)
+        var newReservation = Reservation(null, person, currentEvent, currentTime, null)
         newReservation = reservationRepository.save(newReservation)
         logger.info("NEW RESERVATION: {}", newReservation)
         return newReservation
     }
 
-    fun scan(id: UUID) : Reservation {
+    fun scan(id: String) : Reservation {
         val localCurrentTime = LocalDateTime.now().plusDays(7).minusHours(1)
         val instant: Instant = localCurrentTime.atZone(ZoneId.systemDefault()).toInstant()
         val currentTime = instant.toEpochMilli()
