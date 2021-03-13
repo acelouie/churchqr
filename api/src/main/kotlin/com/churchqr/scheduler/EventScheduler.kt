@@ -28,7 +28,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
 
         val newEntity = Event(UUID.randomUUID(),"Sunday Service " + nextSunday.year + "-" + nextSunday.month + "-" + nextSunday.dayOfMonth, epochMilli, EventStatus.OPEN)
         eventRepository.save(newEntity)
-        logger.info("EVENT OPENED: {}]", newEntity)
+        logger.info("EVENT OPENED: {}", newEntity)
     }
 
     /**
@@ -39,7 +39,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
         val currentEvent = eventRepository.findTop1ByStatusOrderByEventDateTimeDesc(EventStatus.OPEN)
         val updatedEvent: Event = currentEvent.copy(status = EventStatus.CLOSED)
         eventRepository.save(updatedEvent)
-        logger.info("EVENT CLOSED: {}]", updatedEvent)
+        logger.info("EVENT CLOSED: {}", updatedEvent)
     }
 
 }
