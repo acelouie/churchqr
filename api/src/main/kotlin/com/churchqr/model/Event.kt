@@ -16,5 +16,5 @@ data class Event(
     @Column(insertable = true, updatable = false, length = 36) val id: String?,
     @NotNull @Column(length = 50) val name: String,
     @NotNull val eventDateTime: Long,
-    @NotNull @Enumerated(EnumType.STRING) val status: EventStatus
+    @NotNull @Enumerated(EnumType.STRING) @Column(length = 20) val status: EventStatus
 )
