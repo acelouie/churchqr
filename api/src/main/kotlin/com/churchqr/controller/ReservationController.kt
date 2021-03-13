@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @CrossOrigin
 @RestController
-class ReservationController {
+class ReservationController : BaseController() {
 
     @PostMapping("/v1/reservation/reserve")
     fun reserve() {
