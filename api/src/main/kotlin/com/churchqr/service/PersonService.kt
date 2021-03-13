@@ -1,19 +1,14 @@
 package com.churchqr.service
 
-import com.churchqr.datasource.PersonDataSource
+import com.churchqr.repository.PersonRepository
 import com.churchqr.model.Person
 import org.springframework.stereotype.Service
 
 @Service
-class PersonService(private val dataSource: PersonDataSource) {
-
-    fun add(newEntity : Person) : Person {
-        return dataSource.save(newEntity)
-    }
+class PersonService(private val personRepository: PersonRepository) {
 
     fun findByMobileNo(mobileNo : String) : Person {
-        return dataSource.findByMobileNo(mobileNo)
+        return personRepository.findByMobileNo(mobileNo)
     }
-
 
 }
