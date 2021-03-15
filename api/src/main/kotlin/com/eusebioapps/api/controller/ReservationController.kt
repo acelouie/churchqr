@@ -7,11 +7,9 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import javax.persistence.Column
 import javax.validation.Valid
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Pattern
-import javax.validation.constraints.Size
+import javax.validation.constraints.*
 
 @CrossOrigin
 @RestController
@@ -29,30 +27,42 @@ class ReservationController(private val reservationService: ReservationServiceIm
     @PostMapping
     fun reserve(@Valid @RequestBody requestDto: ReserveRequestDto) : ResponseEntity<Reservation> {
         logger.debug("POST /api/v1/reservation [{}]", requestDto)
-        return ResponseEntity.status(HttpStatus.OK).body(reservationService.reserve(requestDto.mobileNo, requestDto.email, requestDto.firstName, requestDto.lastName, requestDto.birthday))
+        return ResponseEntity.status(HttpStatus.OK).body(
+            reservationService.reserve(requestDto.mobileNo, requestDto.email,
+                requestDto.firstName, requestDto.lastName, requestDto.birthday,
+                requestDto.fullAddress, requestDto.city))
     }
 
     data class ReserveRequestDto(
-        @field:NotNull(message = "Mobile No is required")
+        @field:NotEmpty(message = "Mobile No is required")
         @field:Pattern(regexp = "^(09)\\d{9}", message = "Mobile No format should be 09XXXXXXXXX")
         val mobileNo: String,
 
-        @field:NotNull(message = "Email is required")
+        @field:NotEmpty(message = "Email is required")
         @field:Email(message = "Email should have a valid email format")
-        @field:Size(min=1,max=50, message = "Email should be between 1 to 50 characters")
+        @field:Size(max=50, message = "Email should not exceed 50 characters")
         val email: String,
 
-        @field:NotNull(message = "First Name is required")
-        @field:Size(min=1,max=50, message = "First Name should be between 1 to 50 characters")
+        @field:NotEmpty(message = "First Name is required")
+        @field:Size(max=50, message = "First Name should not exceed 50 characters")
         val firstName: String,
 
-        @field:NotNull(message = "Last Name is required")
-        @field:Size(min=1, max=50, message = "Last Name should be between 1 to 50 characters")
+        @field:NotEmpty(message = "Last Name is required")
+        @field:Size(max=50, message = "Last Name should not exceed 50 characters")
         val lastName: String,
 
-        @field:NotNull(message = "Birthday is required")
+        @field:NotEmpty(message = "Birthday is required")
         @field:DateTimeFormat(pattern = "yyyy-MM-dd")
-        val birthday: String
+        val birthday: String,
+
+        @field:NotEmpty(message = "Address is required")
+        @field:Size(max=255, message = "Address should not exceed to 255 characters")
+        val fullAddress: String,
+
+        @field:NotEmpty(message = "City is required")
+        @field:Size(max=100, message = "City should not exceed 100 characters")
+        val city: String
+
     )
 
 }

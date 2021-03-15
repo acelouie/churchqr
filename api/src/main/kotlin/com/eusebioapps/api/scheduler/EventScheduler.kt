@@ -2,6 +2,7 @@ package com.eusebioapps.api.scheduler
 
 import com.eusebioapps.api.model.Event
 import com.eusebioapps.api.model.enum.EventStatus
+import com.eusebioapps.api.model.exception.BusinessRuleException
 import com.eusebioapps.api.repository.EventRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -14,7 +15,7 @@ import java.time.Instant
 @Component
 class EventScheduler(private val eventRepository: EventRepository) {
 
-    private val logger = LoggerFactory.getLogger(javaClass);
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Scheduled(cron = "0 0 10 ? * SUN")
     fun createEvent() {
@@ -30,6 +31,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
     @Scheduled(cron = "0 0 17 * * FRI")
     fun closeEventRegistration() {
         val currentEvent = eventRepository.findTop1ByStatusOrderByEventDateTimeDesc(EventStatus.OPEN)
+            ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
         val updatedEvent: Event = currentEvent.copy(status = EventStatus.CLOSED)
         eventRepository.save(updatedEvent)
         logger.debug("closeEventRegistration: {}", updatedEvent)

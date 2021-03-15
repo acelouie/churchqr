@@ -1,5 +1,6 @@
 package com.eusebioapps.api.controller
 
+import com.eusebioapps.api.model.exception.BusinessRuleException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.validation.FieldError
@@ -14,14 +15,14 @@ open class BaseController {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    data class ValidationErrorDto(
-        val message: String,
-        val errors: MutableMap<String, String?>
+    data class ErrorMessageDto(
+        val message: String?,
+        val errors: MutableMap<String, String?>?
     )
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidationExceptions(ex: MethodArgumentNotValidException): ValidationErrorDto {
+    fun handleValidationExceptions(ex: MethodArgumentNotValidException): ErrorMessageDto {
         val errors: MutableMap<String, String?> = HashMap()
         ex.bindingResult.allErrors.forEach(Consumer { error: ObjectError ->
             val fieldName = (error as FieldError).field
@@ -29,9 +30,16 @@ open class BaseController {
             errors[fieldName] = errorMessage
         })
 
-        val msg = ValidationErrorDto("There are still errors in your given data", errors)
-        logger.error("ValidationError [{}]", msg)
+        val msg = ErrorMessageDto("There are still errors in your given data", errors)
+        logger.error("ValidationException [{}]", msg)
         return msg
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(BusinessRuleException::class)
+    fun handleBusinessRuleExceptions(ex: BusinessRuleException) : ErrorMessageDto {
+        logger.error("BusinessRuleException [message={}]", ex.message)
+        return ErrorMessageDto(ex.message, null)
     }
 
 }
