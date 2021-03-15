@@ -1,0 +1,7 @@
+FROM azul/zulu-openjdk-alpine:11
+
+VOLUME /tmp
+ADD build/libs/api-1.0.0.jar app.jar
+ADD docker-application.properties /config/application.properties
+
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar","--spring.config.location=file:/config/application.properties"]
