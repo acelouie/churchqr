@@ -21,7 +21,8 @@ qrWindow.callback = scannedData => {
 
             outputData.innerText = JSON.stringify(reservationDetails);
         }
-
+        userAction();
+        
         /*scanning = false;
 
         video.srcObject.getTracks().forEach(track => {
