@@ -19,7 +19,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
 
     @Scheduled(cron = "0 0 2 ? * SUN") // UTC SUN 2:00 AM -> GMT+8 SUN 10:00 AM
     fun createEvent() {
-        val nextSunday = LocalDateTime.now().plusDays(7).minusHours(1)
+        val nextSunday = LocalDateTime.now().plusDays(7)
         val instant: Instant = nextSunday.atZone(ZoneId.systemDefault()).toInstant()
         val epochMilli = instant.toEpochMilli()
 
