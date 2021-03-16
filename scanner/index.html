@@ -9,15 +9,19 @@
 </head>
 
 <body>
-<div id="container">
-    <h1>Attendance Scanner</h1>
-    <button id="btn-start">Start Scanning</button>
-    <div id="qr-result">
-        <b>Data:</b> <span id="outputData"></span>
+    <!-- HEADER: Event details & scanned results -->
+    <div id="header">
+        <p id="eventName"></p>
+        <span id="name"></span><br/>
+        <span id="mobileNo"></span><br/>
+        <span id="email"></span>
+        <span id="city"></span>
+        <br>
     </div>
+    <!-- THE SCANNER -->
     <canvas id="qr-canvas"></canvas>
-</div>
 
-<script src="./src/qrCodeScanner.js"></script>
+    <!-- SCRIPTS -->
+    <script src="./src/qrCodeScanner.js"></script>
 </body>
 </html>

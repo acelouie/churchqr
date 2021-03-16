@@ -4,23 +4,15 @@ const video = document.createElement("video");
 const canvasElement = document.getElementById("qr-canvas");
 const canvas = canvasElement.getContext("2d");
 
-const btnStart = document.getElementById("btn-start");
-const outputData = document.getElementById("outputData");
-
 let scanning = false;
 
 qrWindow.callback = scannedData => {
     if (scannedData) {
 
-        const userAction = async () => {
-            console.log("Calling API");
-            const response = await fetch('https://api.ffaurora.org/api/v1/reservation?id=' + scannedData);
-            const reservationDetails = await response.json();
+        // Call API & display results
+        callApi(scannedData);
 
-            outputData.innerText = JSON.stringify(reservationDetails);
-        }
-        userAction();
-
+        // Reset scanner ticks
         scanning = false;
         video.srcObject.getTracks().forEach(track => {
             track.stop();
@@ -30,6 +22,7 @@ qrWindow.callback = scannedData => {
 };
 
 window.onload = function() {
+    getCurrentEvent();
     startScanning();
 };
 
@@ -60,4 +53,23 @@ function scan() {
     } catch (e) {
         setTimeout(scan, 300);
     }
+}
+
+async function callApi(scannedData) {
+    // Call API
+    const response = await fetch('https://api.ffaurora.org/api/v1/reservation?id=' + scannedData);
+    const reservationDetails = await response.json();
+
+    // Display results
+    document.getElementById("name").innerText = reservationDetails.person.firstName + " " + reservationDetails.person.lastName;
+    document.getElementById("mobileNo").innerText = reservationDetails.person.mobileNo;
+    document.getElementById("email").innerText = reservationDetails.person.email;
+    document.getElementById("city").innerText = reservationDetails.person.city;
+}
+
+async function getCurrentEvent() {
+    const response = await fetch('https://api.ffaurora.org/api/v1/event/current');
+    const currentEvent = await response.json();
+
+    document.getElementById("eventName").innerText = currentEvent.name;
 }
