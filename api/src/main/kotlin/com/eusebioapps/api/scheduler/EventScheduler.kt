@@ -17,7 +17,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @Scheduled(cron = "0 0 10 ? * SUN")
+    @Scheduled(cron = "0 0 2 ? * SUN") // UTC SUN 2:00 AM -> GMT+8 SUN 10:00 AM
     fun createEvent() {
         val nextSunday = LocalDateTime.now().plusDays(7).minusHours(1)
         val instant: Instant = nextSunday.atZone(ZoneId.systemDefault()).toInstant()
@@ -28,7 +28,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
         logger.debug("createEvent: {}", newEntity)
     }
 
-    @Scheduled(cron = "0 0 17 * * FRI")
+    @Scheduled(cron = "0 0 9 * * FRI") // UTC FRI 9:00 AM -> GMT+8 FRI 5:00 PM
     fun closeEventRegistration() {
         val currentEvent = eventRepository.findTop1ByStatusOrderByEventDateTimeDesc(EventStatus.OPEN)
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
