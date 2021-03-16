@@ -14,14 +14,14 @@ let scanning = false;
 qrWindow.callback = scannedData => {
     if (scannedData) {
 
-        const userAction = async () => {
+        /*const userAction = async () => {
             const response = await fetch('https://api.ffaurora.org/api/v1/reservation?id=' + scannedData);
             const reservationDetails = await response.json();
 
             outputData.innerText = JSON.stringify(reservationDetails);
-        }
+        }*/
 
-        /*scanning = false;
+        scanning = false;
 
         video.srcObject.getTracks().forEach(track => {
             track.stop();
@@ -29,7 +29,7 @@ qrWindow.callback = scannedData => {
 
         qrResult.hidden = false;
         canvasElement.hidden = true;
-        btnScanQR.hidden = false;*/
+        btnScanQR.hidden = false;
     }
 };
 
