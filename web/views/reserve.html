@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="../public/styles/google-icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../public/styles/materialize.min.css"  media="screen,projection"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+    <div class="container" id="content">
+        
+       
+        <div class="row">
+          <div class="col l3 m3 s12"></div>
+          <div class="col l6 m6 s12">
+            <form id="reservationForm">
+                 <div class="card-panel z-depth-5">
+                  <h5 class="center">Register</h5>
+                  <p class="center">Join our community now !</p>
+                  <div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="mobileNo" name="mobileNo" type="text"/>
+                            <label for="mobileNo" class="active">Mobile Number</label>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="email" name="email" type="email"/>
+                            <label for="email" class="active" >E-mail</label>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <label for="firstName" class="active" >First Name</label>
+                            <input id="firstName" name="firstName" type="text"/>
+                        </div>
+    
+                        <div class="input-field col s6">
+                            <label for="lastName" class="active" >Last Name</label>
+                            <input id="lastName" name="lastName" type="text"/>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <label for="birthday" class="active" >Birthday</label>
+                            <input id="birthday" class="datepicker" name="birthday" type="text"/>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="fullAddress" name="fullAddress" type="text"/>
+                            <label for="fullAddress" class="active">Full Address</label>
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="city" name="city" type="text"/>
+                            <label for="city" class="active">City</label>
+                        </div>
+                    </div>
+                    
+                    <button class="white-text btn waves-effect waves-light col s12" type="submit">Register</button>
+                </div>
+                
+                  <div class="clearfix"></div>
+               </div>
+            </form>
+            
+          </div>
+            <div class="col l3 m3 s12"></div>
+      
+          
+          
+        </div>
+    </div>
+
+    <script type="text/javascript" src="../public/scripts/materialize.min.js"></script>
+    <script type="text/javascript" src="../public/scripts/init.js"></script>
+
+    <script type="text/javascript" src="../settings/server.js"></script>
+    <script type="text/javascript" src="../public/scripts/reserve.js"></script>
+
+</body>
+
+</html>
