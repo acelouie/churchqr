@@ -2,7 +2,7 @@ var queryString = decodeURIComponent(window.location.search);
 queryString = queryString.substring(1);
 var queries = queryString.split("?");
 
-async function setStatus(){
+async function setInfo(){
 
     var getOptions = {
         method: 'GET',
@@ -11,14 +11,14 @@ async function setStatus(){
         cache: 'default'
     };
 
-    var response = await fetch(event_current, getOptions);
+    var response = await fetch(reserve + "?id=" + queries[0], getOptions);
     var result = await response.json();
 
     var qrcode = new QRCode (document.getElementById("qrcode"), queries[0]);
 
-    var p_text = document.getElementById('registrationText');
-    p_text.innerText = result.name;
+    document.getElementById('eventName').innerText = result.event.name;
+    document.getElementById('personName').innerText = result.person.firstName + " " + result.person.lastName;
 }
 
-setStatus();
+setInfo();
 
