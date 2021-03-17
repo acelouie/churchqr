@@ -3,6 +3,8 @@ const reservationForm = document.getElementById('reservationForm');
 const eventNameText = document.getElementById('eventName');
 const eventStatusText = document.getElementById('eventStatus');
 
+const fieldsContainer = document.getElementById('fieldsContainer');
+
 const mobileNoInput = document.getElementById('mobileNo');
 const emailInput = document.getElementById('email');
 const firstNameInput = document.getElementById('firstName');
@@ -64,7 +66,10 @@ async function getStatus(){
         if(result.status == "OPEN") {
             eventStatusText.innerHTML = "Registration is open!";
         } else {
-            eventStatusText.innerText = "Registration is closed. Please try again next week. :(";
+            eventStatusText.innerHTML = "Sorry, registration for this Sunday is already closed.<br>Please try again next week." +
+                "<p style='font-size:16px; margin: 30px auto 0px auto; font-style: italic;'>Registration opens every week after the Sunday service.</p>" +
+                "<p style='font-size:16px; margin: 20px auto 30px auto; font-style: italic;'>Registration closes every Friday by 5PM<br>or when the limit of 250 people is reached.</p>";
+            fieldsContainer.style.display = "none";
         }
     }
     
