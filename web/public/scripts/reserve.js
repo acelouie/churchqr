@@ -1,5 +1,8 @@
 const reservationForm = document.getElementById('reservationForm');
 
+const eventNameText = document.getElementById('eventName');
+const eventStatusText = document.getElementById('eventStatus');
+
 const mobileNoInput = document.getElementById('mobileNo');
 const emailInput = document.getElementById('email');
 const firstNameInput = document.getElementById('firstName');
@@ -17,7 +20,7 @@ window.onload = function() {
     fullAddressInput.value = null;
     cityInput.value = null;
 
-    getStatus
+    getStatus();
 };
 
 reservationForm.addEventListener('submit', async function(e){
@@ -54,6 +57,16 @@ async function getStatus(){
 
     var response = await fetch(event_current, getOptions);
     var result = await response.json();
+
+    // update fields
+    if(result.message == null) {
+        eventNameText.innerText = result.name;
+        if(result.status == "OPEN") {
+            eventStatusText.innerHTML = "Registration is open!";
+        } else {
+            eventStatusText.innerText = "Registration is closed. Please try again next week. :(";
+        }
+    }
     
     return result;
 
