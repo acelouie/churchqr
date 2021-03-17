@@ -13,7 +13,7 @@ class EventServiceImpl(private val eventRepository: EventRepository) : EventServ
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun findCurrentEvent(): Event {
-        val currentEvent = eventRepository.findTop1ByStatusOrderByEventDateTimeDesc(EventStatus.OPEN)
+        val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.");
         logger.debug("findCurrentEvent: [{}]", currentEvent)
         return currentEvent

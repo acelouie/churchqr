@@ -30,7 +30,7 @@ class EventScheduler(private val eventRepository: EventRepository) {
 
     @Scheduled(cron = "0 0 9 * * FRI") // UTC FRI 9:00 AM -> GMT+8 FRI 5:00 PM
     fun closeEventRegistration() {
-        val currentEvent = eventRepository.findTop1ByStatusOrderByEventDateTimeDesc(EventStatus.OPEN)
+        val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
         val updatedEvent: Event = currentEvent.copy(status = EventStatus.CLOSED)
         eventRepository.save(updatedEvent)

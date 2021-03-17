@@ -2,7 +2,6 @@ package com.eusebioapps.api.service.reservation
 
 import com.eusebioapps.api.model.Person
 import com.eusebioapps.api.model.Reservation
-import com.eusebioapps.api.model.enum.EventStatus
 import com.eusebioapps.api.model.exception.BusinessRuleException
 import com.eusebioapps.api.repository.EventRepository
 import com.eusebioapps.api.repository.PersonRepository
@@ -26,7 +25,7 @@ class ReservationServiceImpl(
             mobileNo, email, firstName, lastName, birthday, fullAddress, city)
 
         // Validate event
-        val currentEvent = eventRepository.findTop1ByStatusOrderByEventDateTimeDesc(EventStatus.OPEN)
+        val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
         val eventList = reservationRepository.findByEvent(currentEvent)
 
