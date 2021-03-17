@@ -1,5 +1,25 @@
 const reservationForm = document.getElementById('reservationForm');
 
+const mobileNoInput = document.getElementById('mobileNo');
+const emailInput = document.getElementById('email');
+const firstNameInput = document.getElementById('firstName');
+const lastNameInput = document.getElementById('lastName');
+const birthdayInput = document.getElementById('birthday');
+const fullAddressInput = document.getElementById('fullAddress');
+const cityInput = document.getElementById('city');
+
+window.onload = function() {
+    mobileNoInput.value = null;
+    emailInput.value = null;
+    firstNameInput.value = null;
+    lastNameInput.value = null;
+    birthdayInput.value = null;
+    fullAddressInput.value = null;
+    cityInput.value = null;
+
+    getStatus
+};
+
 reservationForm.addEventListener('submit', async function(e){
     e.preventDefault();
 
@@ -59,7 +79,21 @@ async function getPerson(no){
     var response = await fetch(findByMobileNo + no, getOptions);
     var result = await response.json();
 
-    console.log(result); 
+    console.log(result);
+
+    // fill fields
+    if(result.message == null) {
+        emailInput.value = result.email;
+        firstNameInput.value = result.firstName;
+        lastNameInput.value = result.lastName;
+        birthdayInput.value = result.birthday;
+        fullAddressInput.value = result.fullAddress;
+        cityInput.value = result.city;
+    }
 
     return result;
+}
+
+function autofill() {
+    getPerson(mobileNoInput.value);
 }
