@@ -21,6 +21,9 @@
                             Please take a screenshot of your QR code.<br>
                             You will present this to the ushers for contact tracing.
                         </p>
+                        <!-- Anything inside here will be made into a downloadable image -->
+                        <!-- From Here -->
+                        <div id="capture">
                         <p id="eventName" class="center" style="font-size: 20px; margin-bottom: -10px; font-weight: bold;">{event}</p>
                         <p class="center" style="margin-bottom: 30px;">Service starts exactly at 10:00 AM</p>
 
@@ -29,8 +32,15 @@
                         </div>
 
                         <p class="center" id="personName" style="font-size: 30px; font-weight: bold; text-transform: uppercase; margin-bottom: 50px;">{person}</p>
-
-                    </div>
+                        </div>
+                        <!-- To here -->
+                        
+                        <div class="row">
+                            <div class="col s12">
+                            <a id="qrDownload" href="" download="" class="white-text btn waves-effect waves-light col s12">Download QR</a>
+                            </div>
+                        </div>
+                        </div>
                    
                      <div class="clearfix"></div>
                   </div>
@@ -48,6 +58,8 @@
 
     <script type="text/javascript" src="../public/scripts/jquery.min.js"></script>
     <script type="text/javascript" src="../public/scripts/qrcode.min.js"></script>
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
 
     <script type="text/javascript" src="../settings/server.js"></script>
     <script type="text/javascript" src="../public/scripts/qr.js"></script>

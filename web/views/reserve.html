@@ -80,10 +80,10 @@
     
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="city" name="city" type="text" class="validate" required="required" aria-required="true"/>
-                            <label for="city" class="active">City
-                                <sup class="red-text"> *</sup>
-                            </label>
+                            <select id="city" name="city" type="text" class="validate" required="required" aria-required="true">
+                                <option value="" disabled selected>Choose your City</option>
+                            </select>
+                            <label>City <sup class="red-text"> *</sup></label>
                             <span id="cityHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
@@ -111,6 +111,7 @@
                     <sup class="red-text"> * Required fields</sup>
                     <br>
                     <button class="white-text btn waves-effect waves-light col s12" type="submit">Register</button>
+                    <div class="row"></div>
                     <div class="footnote">
                     <sup class="grey-text inline">By clicking submit, I hereby certify that the above information I have freely given are true and correct; In pursuant to Data Privacy Act - I agree & give consent to the Organization and its representatives to collect, process, and store these information for legitimate purposes in the implementation of office policy and protocols related to COVID.</sup>
                     </div>
@@ -136,6 +137,7 @@
     <script type="text/javascript" src="../public/scripts/init.js"></script>
 
     <script type="text/javascript" src="../settings/server.js"></script>
+    <script type="text/javascript" src="../public/scripts/cities.js"></script>
     <script type="text/javascript" src="../public/scripts/reserve.js"></script>
 
 </body>

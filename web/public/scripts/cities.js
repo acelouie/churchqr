@@ -13,7 +13,7 @@ const cities = [
     "Bayawan City",
     "Baybay City",
     "Bayugan City",
-    "Biñan City",
+    "Binan City",
     "Bislig City",
     "Bogo City",
     "Borongan City",

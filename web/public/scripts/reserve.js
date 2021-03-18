@@ -62,6 +62,7 @@ window.onload = function() {
     fullAddressInput.value = null;
     cityInput.value = null;
 
+    cityDropdown();
     getStatus();
 };
 
@@ -157,6 +158,7 @@ async function getPerson(no){
         
         //changes validation colors and makes sure changes happen
         checkForEmptyFields();
+        selectInit();
         focusAllFields();
         M.updateTextFields();
     }
@@ -195,7 +197,6 @@ function validateAllFields(){
 
         formInput = inputList[i];
         elemHelper = document.getElementById(formInput.id+"Helper");
-        console.log(elemHelper.classList.contains('invalid'));
         if(elemHelper.classList.contains('invalid')){
             return false;
         }
@@ -275,7 +276,8 @@ $.validator.setDefaults({
       console.log('form ok');
     }
   });
-  
+
+  document.getElementById('city').select
 $("#reservationForm").validate({
 rules: {
     dateField: {
@@ -284,4 +286,26 @@ rules: {
 }
 });
 
+function cityDropdown(){
+    
+    var i;
+    var cityOption;
+
+    for (i in cities){
+        
+        cityOption = document.createElement("option");
+        cityOption.value = cities[i];
+        cityOption.innerText = cities[i];
+
+        cityInput.appendChild(cityOption);
+    }
+
+    selectInit();
+}
+
+function selectInit(){
+    var elems = document.querySelectorAll('select');
+    var options = {};
+    var instances = M.FormSelect.init(elems, options);
+}
 M.updateTextFields();
