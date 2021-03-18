@@ -13,60 +13,107 @@
         <div class="row">
           <div class="col l3 m3 s12"></div>
           <div class="col l6 m6 s12">
-            <form id="reservationForm">
+            <form id="reservationForm" novalidate="novalidate">
                  <div class="card-panel z-depth-5">
                   <div><img src="../public/img/ffa-logo.png" alt="Faith Fellowship Aurora" style="display: block; width:100px; margin: 0 auto 0 auto;"/></div>
                   <h5 class="center" style="font-weight: bold;" id="eventName">Sunday Service</h5>
                   <h6 class="center" id="eventStatus">Registration is {status}!</h6>
                   <div id="fieldsContainer">
+                      
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="mobileNo" name="mobileNo" type="text" onkeyup="autofill()"/>
-                            <label for="mobileNo" class="active">Mobile Number</label>
+                            <input id="mobileNo" name="mobileNo" type="text" required="required" aria-required="true" onkeyup="autofill()" class="validate" pattern="^09\d{9}$"/>
+                            <label for="mobileNo" class="active">Mobile Number
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="mobileNoHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
                     
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="email" name="email" type="email"/>
-                            <label for="email" class="active" >E-mail</label>
+                            <input id="email" name="email" type="email" required="required" aria-required="true" class="validate"/>
+                            <label for="email" class="active" >E-mail
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="emailHelper" class="helper-text" data-error="Must be a valid email address"></span>
                         </div>
                     </div>
     
                     <div class="row">
                         <div class="input-field col s6">
-                            <label for="firstName" class="active" >First Name</label>
-                            <input id="firstName" name="firstName" type="text"/>
+                            <input id="firstName" name="firstName" type="text" required="required" aria-required="true" class="validate"/>
+                            <label for="firstName" class="active" >First Name
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="firstNameHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
     
                         <div class="input-field col s6">
-                            <label for="lastName" class="active" >Last Name</label>
-                            <input id="lastName" name="lastName" type="text"/>
+                            <input id="lastName" name="lastName" type="text" required="required" aria-required="true" class="validate"/>
+                            <label for="lastName" class="active" >Last Name
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="lastNameHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
     
                     <div class="row">
                         <div class="input-field col s12">
-                            <label for="birthday" class="active" >Birthday</label>
-                            <input id="birthday" class="datepicker" name="birthday" type="text"/>
+                            <input id="birthday" class="datepicker validate" name="birthday" type="text" required="required" aria-required="true"/>
+                            <label for="birthday" class="active" >Birthday
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="birthdayHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
     
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="fullAddress" name="fullAddress" type="text"/>
-                            <label for="fullAddress" class="active">Full Address</label>
+                            <input id="fullAddress" name="fullAddress" type="text" class="validate" required="required" aria-required="true"/>
+                            <label for="fullAddress" class="active">Full Address
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="fullAddressHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
     
                     <div class="row">
                         <div class="input-field col s12">
-                            <input id="city" name="city" type="text"/>
-                            <label for="city" class="active">City</label>
+                            <input id="city" name="city" type="text" class="validate" required="required" aria-required="true"/>
+                            <label for="city" class="active">City
+                                <sup class="red-text"> *</sup>
+                            </label>
+                            <span id="cityHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
                     
+                    <p>
+                        <label>
+                          <input id="symptomsCheckbox" name="symptomsCheckbox" type="checkbox" class="filled-in" required="required"/>
+                          <span>I am not experiencing any COVID-related symptoms in the past 2 weeks
+                            <sup class="red-text"> *</sup>
+                          </span>
+                          <span class="helper-text" data-error="This field is required"></span>
+                        </label>
+                        
+                    </p>
+
+                    <p>
+                        <label>
+                          <input id="contactCheckbox" name="contactCheckbox" type="checkbox" class="filled-in" required="required"/>
+                          <span>I have not been in close contact with a confirmed COVID case in the past 2 weeks
+                            <sup class="red-text"> *</sup>
+                          </span>
+                        </label>
+                    </p>
+
+                    <sup class="red-text"> * Required fields</sup>
+                    <br>
                     <button class="white-text btn waves-effect waves-light col s12" type="submit">Register</button>
+                    <div class="footnote">
+                    <sup class="grey-text inline">By clicking submit, I hereby certify that the above information I have freely given are true and correct; In pursuant to Data Privacy Act - I agree & give consent to the Organization and its representatives to collect, process, and store these information for legitimate purposes in the implementation of office policy and protocols related to COVID.</sup>
+                    </div>
                 </div>
                 
                   <div class="clearfix"></div>
@@ -81,6 +128,10 @@
         </div>
     </div>
 
+
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
     <script type="text/javascript" src="../public/scripts/materialize.min.js"></script>
     <script type="text/javascript" src="../public/scripts/init.js"></script>
 

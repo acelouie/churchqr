@@ -5,6 +5,8 @@ const eventStatusText = document.getElementById('eventStatus');
 
 const fieldsContainer = document.getElementById('fieldsContainer');
 
+//inputs
+
 const mobileNoInput = document.getElementById('mobileNo');
 const emailInput = document.getElementById('email');
 const firstNameInput = document.getElementById('firstName');
@@ -13,7 +15,45 @@ const birthdayInput = document.getElementById('birthday');
 const fullAddressInput = document.getElementById('fullAddress');
 const cityInput = document.getElementById('city');
 
+const inputList = [
+    mobileNoInput, 
+    emailInput,
+    firstNameInput,
+    lastNameInput,
+    birthdayInput,
+    fullAddressInput,
+    cityInput
+]
+
+//checkboxes
+
+const symptoms = document.getElementById('symptomsCheckbox');
+const contact = document.getElementById('contactCheckbox');
+
+const checkboxList = [
+    symptoms,
+    contact
+]
+
+//helper texts
+const mobileNoHelper = document.getElementById('mobileNoHelper');
+const emailHelper = document.getElementById('emailHelper');
+const firstNameHelper = document.getElementById('firstNameHelper');
+const lastNameHelper = document.getElementById('lastNameHelper');
+const birthdayHelper = document.getElementById('birthdayHelper');
+const fullAddressHelper = document.getElementById('fullAddressHelper');
+const cityHelper = document.getElementById('cityHelper');
+
+// validation texts
+
+const valTexts = {
+    required: "This field is required",
+    valid: "Must be a valid ",
+    phone: "Must be an 11-digit phone number"
+}
+
 window.onload = function() {
+
     mobileNoInput.value = null;
     emailInput.value = null;
     firstNameInput.value = null;
@@ -26,7 +66,15 @@ window.onload = function() {
 };
 
 reservationForm.addEventListener('submit', async function(e){
+
     e.preventDefault();
+    
+    //Checks for empty fields, see respective functions
+    checkForEmptyFields();
+    var validFields = validateAllFields();
+
+    //If none of the fields have an invalid class, proceed posting to API
+    if (validFields == true) {
 
     const formData = new FormData(reservationForm).entries();
     const formBody = JSON.stringify(Object.fromEntries(formData));
@@ -37,14 +85,16 @@ reservationForm.addEventListener('submit', async function(e){
         body: formBody
     };
 
-    // reserve variable found in ../settings/server.js
+    // 'reserve' variable found in ../settings/server.js
 
     var response = await fetch(reserve, postOptions);
     var result = await response.json();
     
-    console.log(result.id);
-    
     window.location.href = "../views/qr.html?" + result.id;
+
+    }
+
+    
 
 });
 
@@ -78,14 +128,12 @@ async function getStatus(){
 }
 
 
-//function accepts string for mobile number
+// function accepts string for mobile number
 // e.g. var mo_no = '09083909247';
 
 async function getPerson(no){
 
     const mobileNoBody = JSON.stringify(no);
-
-    console.log(mobileNoBody);
 
     var getOptions = {
         method: 'GET',
@@ -97,7 +145,6 @@ async function getPerson(no){
     var response = await fetch(findByMobileNo + no, getOptions);
     var result = await response.json();
 
-    console.log(result);
 
     // fill fields
     if(result.message == null) {
@@ -107,11 +154,134 @@ async function getPerson(no){
         birthdayInput.value = result.birthday;
         fullAddressInput.value = result.fullAddress;
         cityInput.value = result.city;
+        
+        //changes validation colors and makes sure changes happen
+        checkForEmptyFields();
+        focusAllFields();
+        M.updateTextFields();
     }
-
+    
     return result;
 }
 
 function autofill() {
-    getPerson(mobileNoInput.value);
+
+    const phoneEx = /^09\d{9}$/;
+
+    // Changes error message to match regex
+    if (mobileNoInput.value.match(phoneEx)){
+        getPerson(mobileNoInput.value);
+        mobileNoInput.classList.remove('invalid');
+        mobileNoInput.classList.add('valid');
+        
+    } else {
+        mobileNoInput.classList.remove('valid');
+        mobileNoInput.classList.add('invalid');
+        mobileNoHelper.dataset.error = valTexts.phone;
+    }
+    
 }
+
+// For Validation //
+
+//Returns a boolean, used for checking if one field is empty
+function validateAllFields(){
+
+    var elemHelper;
+    var i;
+    var formInput;
+
+    for (i in inputList){
+
+        formInput = inputList[i];
+        elemHelper = document.getElementById(formInput.id+"Helper");
+        console.log(elemHelper.classList.contains('invalid'));
+        if(elemHelper.classList.contains('invalid')){
+            return false;
+        }
+
+    }
+
+    for (i in checkboxList) {
+
+        formInput = checkboxList[i];
+
+        if (formInput.checked == false) {
+            return false;
+        }
+    }
+
+    return true;
+
+}
+
+//Checks if field is empty or not then changes class to "invalid" or "valid" respectively
+function checkForEmptyFields(){
+    
+    var elemHelper;
+    var i;
+    var formInput;
+
+    for (i in inputList){
+
+        formInput = inputList[i];
+        formInputLabel = inputList[i].parentElement.children[1].innerText;
+
+        if (formInput.value == "") {
+
+            elemHelper = document.getElementById(formInput.id+"Helper");
+            elemHelper.classList.remove('valid');
+            elemHelper.classList.add('invalid');
+            elemHelper.dataset.error = valTexts.required;
+
+        } else {
+
+            elemHelper = document.getElementById(formInput.id+"Helper");
+            elemHelper.classList.remove('invalid');
+            elemHelper.classList.add('valid');
+
+        }
+
+    }
+
+    
+}
+
+//Materialize.css only updates the validation color on focus
+//Instead of changing the css, this was an easier solution
+function focusAllFields(){
+
+    var i;
+
+    for (i in inputList){
+
+        formInput = inputList[i];
+        formInput.focus();
+        formInput.blur();
+    }
+}
+
+//Avoids using focusAllFields to change validation color on focus
+$.validator.setDefaults({
+    errorClass: 'invalid',
+    validClass: "valid",
+    errorPlacement: function(error, element) {
+      $(element)
+        .closest("form")
+        .find("label[for='" + element.attr("id") + "']")
+        .attr('data-error', error.text());
+    },
+    submitHandler: function(form) {
+      console.log('form ok');
+    }
+  });
+  
+$("#reservationForm").validate({
+rules: {
+    dateField: {
+    date: true
+    }
+}
+});
+
+M.updateTextFields();
