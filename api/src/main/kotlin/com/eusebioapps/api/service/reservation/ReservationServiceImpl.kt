@@ -2,6 +2,7 @@ package com.eusebioapps.api.service.reservation
 
 import com.eusebioapps.api.model.Person
 import com.eusebioapps.api.model.Reservation
+import com.eusebioapps.api.model.enum.EventStatus
 import com.eusebioapps.api.model.exception.BusinessRuleException
 import com.eusebioapps.api.repository.EventRepository
 import com.eusebioapps.api.repository.PersonRepository
@@ -24,13 +25,15 @@ class ReservationServiceImpl(
         logger.debug("reserve: (start) [mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city{}]",
             mobileNo, email, firstName, lastName, birthday, fullAddress, city)
 
+        val maxAttendance = 250
+
         // Validate event
         val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
-        val eventList = reservationRepository.findByEvent(currentEvent)
+        val reservationList = reservationRepository.findByEvent(currentEvent)
 
-        logger.debug("reserve: (validating current event) [size={},event={}]", eventList.size, currentEvent)
-        if(eventList.size >= 250) {
+        logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
+        if(reservationList.size >= maxAttendance) {
             throw BusinessRuleException("Event attendance limit reached. Only 250 people are allowed.")
         }
 
@@ -72,6 +75,13 @@ class ReservationServiceImpl(
         var newReservation = Reservation(null, person, currentEvent, currentTime, null)
         newReservation = reservationRepository.save(newReservation)
         logger.info("reserve: (done - saved) {}", newReservation)
+
+        // If reservation reached max attendance after saving, close event
+        if(reservationList.size + 1 >= maxAttendance) {
+            val savedEvent = eventRepository.save(currentEvent.copy(status = EventStatus.CLOSED))
+            logger.info("reserve: (max attendance) Closing event. [size={}, event={}]", reservationList.size + 1, savedEvent)
+        }
+
         return newReservation
     }
 
