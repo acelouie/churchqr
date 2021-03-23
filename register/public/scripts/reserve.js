@@ -91,7 +91,7 @@ reservationForm.addEventListener('submit', async function(e){
     var response = await fetch(reserve, postOptions);
     var result = await response.json();
     
-    window.location.href = "../views/qr.html?" + result.id;
+    window.location.href = "../../qr.html?" + result.id;
 
     }
 
