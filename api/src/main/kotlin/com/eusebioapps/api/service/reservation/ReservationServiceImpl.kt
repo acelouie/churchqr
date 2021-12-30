@@ -115,10 +115,7 @@ class ReservationServiceImpl(
     }
 
     override fun scan(id: String) : Reservation {
-        val localCurrentTime = LocalDateTime.now().plusDays(7).minusHours(1)
-        val instant: Instant = localCurrentTime.atZone(ZoneId.systemDefault()).toInstant()
-        val currentTime = instant.toEpochMilli()
-
+        val currentTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         val dbReservation = reservationRepository.findById(id)
         if(dbReservation.isEmpty) {
             throw BusinessRuleException("Reservation does not exist")
