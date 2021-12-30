@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface EventRepository : JpaRepository<Event, String> {
 
-    fun findTop1ByOrderByEventDateTimeDesc(): Event?
+    fun findTop1ByOrderByEventDateTimeDesc() : Event?
 
 }

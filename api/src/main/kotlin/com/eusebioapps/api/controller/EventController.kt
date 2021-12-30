@@ -31,7 +31,7 @@ class EventController(private val eventService: EventService) : BaseController()
     }
 
     @PutMapping
-    fun closeEvent(@RequestParam @NotEmpty id: String) : ResponseEntity<Event> {
+    fun close(@RequestParam @NotEmpty id: String) : ResponseEntity<Event> {
         logger.debug("PUT /api/v1/event/")
         return ResponseEntity.status(HttpStatus.OK).body(eventService.closeEventRegistration(id))
     }

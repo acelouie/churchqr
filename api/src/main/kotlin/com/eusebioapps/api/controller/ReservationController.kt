@@ -29,8 +29,8 @@ class ReservationController(private val reservationService: ReservationServiceIm
         logger.debug("POST /api/v1/reservation [{}]", requestDto)
         return ResponseEntity.status(HttpStatus.OK).body(
             reservationService.reserve(requestDto.mobileNo, requestDto.email,
-                requestDto.firstName, requestDto.lastName, requestDto.birthday,
-                requestDto.fullAddress, requestDto.city))
+                requestDto.firstName, requestDto.lastName, "1992-01-01",
+                requestDto.fullAddress, requestDto.city, requestDto.vaccinated))
     }
 
     data class ReserveRequestDto(
@@ -51,9 +51,9 @@ class ReservationController(private val reservationService: ReservationServiceIm
         @field:Size(max=50, message = "Last Name should not exceed 50 characters")
         val lastName: String,
 
-        @field:NotEmpty(message = "Birthday is required")
+        /* @field:NotEmpty(message = "Birthday is required")
         @field:DateTimeFormat(pattern = "yyyy-MM-dd")
-        val birthday: String,
+        val birthday: String, */
 
         @field:NotEmpty(message = "Address is required")
         @field:Size(max=255, message = "Address should not exceed to 255 characters")
@@ -61,7 +61,10 @@ class ReservationController(private val reservationService: ReservationServiceIm
 
         @field:NotEmpty(message = "City is required")
         @field:Size(max=100, message = "City should not exceed 100 characters")
-        val city: String
+        val city: String,
+
+        @field:NotNull(message = "Vaccination status is required")
+        val vaccinated: Boolean
 
     )
 

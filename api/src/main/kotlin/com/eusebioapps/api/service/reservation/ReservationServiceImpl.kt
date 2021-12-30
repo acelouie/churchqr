@@ -8,6 +8,7 @@ import com.eusebioapps.api.repository.EventRepository
 import com.eusebioapps.api.repository.PersonRepository
 import com.eusebioapps.api.repository.ReservationRepository
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -16,16 +17,30 @@ import java.time.format.DateTimeFormatter
 class ReservationServiceImpl(
     private val eventRepository: EventRepository,
     private val personRepository: PersonRepository,
-    private val reservationRepository: ReservationRepository
-    ) : ReservationService {
+    private val reservationRepository: ReservationRepository,
+    // configuration
+    @Value("\${app.age.min:15}") val ageMin: Int,
+    @Value("\${app.age.max:65}") val ageMax: Int,
+    @Value("\${app.attendance.max:250}") val maxAttendance: Int,
+    @Value("\${app.check.age:false}") val checkAge: Boolean,
+    @Value("\${app.check.vaccinated:false}") val checkVaccinated: Boolean
+) : ReservationService {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    override fun reserve(mobileNo: String, email: String, firstName: String, lastName: String, birthday: String, fullAddress: String, city: String) : Reservation {
-        logger.debug("reserve: (start) [mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city{}]",
-            mobileNo, email, firstName, lastName, birthday, fullAddress, city)
-
-        val maxAttendance = 250
+    override fun reserve(
+        mobileNo: String,
+        email: String,
+        firstName: String,
+        lastName: String,
+        birthday: String,
+        fullAddress: String,
+        city: String,
+        vaccinated: Boolean
+    ) : Reservation {
+        logger.debug("reserve: (start) " +
+                "[mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city={},vaccinated={}]",
+            mobileNo, email, firstName, lastName, birthday, fullAddress, city, vaccinated)
 
         // Validate event
         val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
@@ -33,29 +48,58 @@ class ReservationServiceImpl(
         val reservationList = reservationRepository.findByEvent(currentEvent)
 
         logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
-        if(reservationList.size >= maxAttendance) {
-            throw BusinessRuleException("Event attendance limit reached. Only 250 people are allowed.")
+        if(reservationList.size >= this.maxAttendance) {
+            throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendance} people are allowed.")
         }
 
         // Validate birthday
         val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val convertedBirthday: LocalDate = LocalDate.parse(birthday, dtf)
-        val age = Period.between(convertedBirthday, LocalDate.now()).years
-        logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
-        if(age < 15 || age > 65) {
-            throw BusinessRuleException("Sorry, only people ages 16 to 65 are allowed.")
+        if (this.checkAge) {
+            val age = Period.between(convertedBirthday, LocalDate.now()).years
+            logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
+            if (age < this.ageMin || age > this.ageMax) {
+                throw BusinessRuleException("Sorry, only people ages ${this.ageMin} to ${this.ageMax} are allowed.")
+            }
+        }
+
+        // Validate vaccination
+        if (this.checkVaccinated) {
+            logger.debug("reserve: (validating vaccination) [vaccinated={}]", vaccinated)
+            if (!vaccinated) {
+                throw BusinessRuleException("Sorry, only vaccinated individuals are allowed.")
+            }
         }
 
         // Add or update person
         val dbPerson: Person? = personRepository.findByMobileNo(mobileNo)
         val person = if(dbPerson != null) {
             // Update details of the person
-            val updatedPerson: Person = dbPerson.copy(email = email, firstName = firstName, lastName =  lastName,
-                                                    birthday = convertedBirthday, fullAddress = fullAddress, city = city)
+            val updatedPerson =
+                dbPerson.copy(
+                    email = email,
+                    firstName = firstName,
+                    lastName =  lastName,
+                    birthday = convertedBirthday,
+                    fullAddress = fullAddress,
+                    city = city,
+                    vaccinated = vaccinated
+                )
             logger.debug("reserve: (person updated) [{}]", updatedPerson)
             personRepository.save(updatedPerson)
         } else {
-            val newPerson = Person(null, mobileNo, email, firstName, lastName, convertedBirthday, fullAddress, city)
+            val newPerson =
+                Person(
+                    null,
+                    mobileNo,
+                    email,
+                    firstName,
+                    lastName,
+                    convertedBirthday,
+                    fullAddress,
+                    city,
+                    vaccinated
+                )
             logger.debug("reserve: (person saved) [{}]", newPerson)
             personRepository.save(newPerson)
         }
@@ -68,10 +112,7 @@ class ReservationServiceImpl(
         }
 
         // Save reservation
-        val localCurrentTime = LocalDateTime.now().plusDays(7).minusHours(1)
-        val instant: Instant = localCurrentTime.atZone(ZoneId.systemDefault()).toInstant()
-        val currentTime = instant.toEpochMilli()
-
+        val currentTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         var newReservation = Reservation(null, person, currentEvent, currentTime, null)
         newReservation = reservationRepository.save(newReservation)
         logger.info("reserve: (done - saved) {}", newReservation)
@@ -86,10 +127,7 @@ class ReservationServiceImpl(
     }
 
     override fun scan(id: String) : Reservation {
-        val localCurrentTime = LocalDateTime.now().plusDays(7).minusHours(1)
-        val instant: Instant = localCurrentTime.atZone(ZoneId.systemDefault()).toInstant()
-        val currentTime = instant.toEpochMilli()
-
+        val currentTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         val dbReservation = reservationRepository.findById(id)
         if(dbReservation.isEmpty) {
             throw BusinessRuleException("Reservation does not exist")
