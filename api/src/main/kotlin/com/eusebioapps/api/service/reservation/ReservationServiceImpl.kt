@@ -22,7 +22,8 @@ class ReservationServiceImpl(
     @Value("\${app.age.min:15}") val ageMin: Int,
     @Value("\${app.age.max:65}") val ageMax: Int,
     @Value("\${app.attendance.max:250}") val maxAttendance: Int,
-    @Value("\${app.vaccinated.required:false}") val vaccinatedRequired: Boolean
+    @Value("\${app.check.age:false}") val checkAge: Boolean,
+    @Value("\${app.check.vaccinated:false}") val checkVaccinated: Boolean
 ) : ReservationService {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -54,14 +55,16 @@ class ReservationServiceImpl(
         // Validate birthday
         val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val convertedBirthday: LocalDate = LocalDate.parse(birthday, dtf)
-        val age = Period.between(convertedBirthday, LocalDate.now()).years
-        logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
-        if(age < this.ageMin || age > this.ageMax) {
-            throw BusinessRuleException("Sorry, only people ages ${this.ageMin} to ${this.ageMax} are allowed.")
+        if (this.checkAge) {
+            val age = Period.between(convertedBirthday, LocalDate.now()).years
+            logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
+            if (age < this.ageMin || age > this.ageMax) {
+                throw BusinessRuleException("Sorry, only people ages ${this.ageMin} to ${this.ageMax} are allowed.")
+            }
         }
 
         // Validate vaccination
-        if (vaccinatedRequired) {
+        if (this.checkVaccinated) {
             logger.debug("reserve: (validating vaccination) [vaccinated={}]", vaccinated)
             if (!vaccinated) {
                 throw BusinessRuleException("Sorry, only vaccinated individuals are allowed.")
