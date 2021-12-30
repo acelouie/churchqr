@@ -53,6 +53,9 @@ data class Person(
     @NotNull
     @Column(length=100)
     @Size(min=1, max=100)
-    val city: String
+    val city: String,
+
+    @NotNull
+    val vaccinated: Boolean
 
 )

@@ -4,7 +4,16 @@ import com.eusebioapps.api.model.Reservation
 
 interface ReservationService {
 
-    fun reserve(mobileNo: String, email: String, firstName: String, lastName: String, birthday: String, fullAddress: String, city: String) : Reservation
+    fun reserve(
+        mobileNo: String,
+        email: String,
+        firstName: String,
+        lastName: String,
+        birthday: String,
+        fullAddress: String,
+        city: String,
+        vaccinated: Boolean
+    ) : Reservation
 
     fun scan(id: String) : Reservation
 

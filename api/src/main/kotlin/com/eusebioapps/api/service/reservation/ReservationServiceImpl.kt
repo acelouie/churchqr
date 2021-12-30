@@ -21,9 +21,19 @@ class ReservationServiceImpl(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    override fun reserve(mobileNo: String, email: String, firstName: String, lastName: String, birthday: String, fullAddress: String, city: String) : Reservation {
-        logger.debug("reserve: (start) [mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city{}]",
-            mobileNo, email, firstName, lastName, birthday, fullAddress, city)
+    override fun reserve(
+        mobileNo: String,
+        email: String,
+        firstName: String,
+        lastName: String,
+        birthday: String,
+        fullAddress: String,
+        city: String,
+        vaccinated: Boolean
+    ) : Reservation {
+        logger.debug("reserve: (start) " +
+                "[mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city={},vaccinated={}]",
+            mobileNo, email, firstName, lastName, birthday, fullAddress, city, vaccinated)
 
         val maxAttendance = 250
 
@@ -34,7 +44,7 @@ class ReservationServiceImpl(
 
         logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
         if(reservationList.size >= maxAttendance) {
-            throw BusinessRuleException("Event attendance limit reached. Only 250 people are allowed.")
+            throw BusinessRuleException("Event attendance limit reached. Only $maxAttendance people are allowed.")
         }
 
         // Validate birthday
@@ -50,12 +60,31 @@ class ReservationServiceImpl(
         val dbPerson: Person? = personRepository.findByMobileNo(mobileNo)
         val person = if(dbPerson != null) {
             // Update details of the person
-            val updatedPerson: Person = dbPerson.copy(email = email, firstName = firstName, lastName =  lastName,
-                                                    birthday = convertedBirthday, fullAddress = fullAddress, city = city)
+            val updatedPerson =
+                dbPerson.copy(
+                    email = email,
+                    firstName = firstName,
+                    lastName =  lastName,
+                    birthday = convertedBirthday,
+                    fullAddress = fullAddress,
+                    city = city,
+                    vaccinated = vaccinated
+                )
             logger.debug("reserve: (person updated) [{}]", updatedPerson)
             personRepository.save(updatedPerson)
         } else {
-            val newPerson = Person(null, mobileNo, email, firstName, lastName, convertedBirthday, fullAddress, city)
+            val newPerson =
+                Person(
+                    null,
+                    mobileNo,
+                    email,
+                    firstName,
+                    lastName,
+                    convertedBirthday,
+                    fullAddress,
+                    city,
+                    vaccinated
+                )
             logger.debug("reserve: (person saved) [{}]", newPerson)
             personRepository.save(newPerson)
         }
