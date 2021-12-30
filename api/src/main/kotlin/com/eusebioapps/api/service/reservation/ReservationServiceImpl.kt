@@ -8,6 +8,7 @@ import com.eusebioapps.api.repository.EventRepository
 import com.eusebioapps.api.repository.PersonRepository
 import com.eusebioapps.api.repository.ReservationRepository
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -16,8 +17,13 @@ import java.time.format.DateTimeFormatter
 class ReservationServiceImpl(
     private val eventRepository: EventRepository,
     private val personRepository: PersonRepository,
-    private val reservationRepository: ReservationRepository
-    ) : ReservationService {
+    private val reservationRepository: ReservationRepository,
+    // configuration
+    @Value("\${app.age.min:15}") val ageMin: Int,
+    @Value("\${app.age.max:65}") val ageMax: Int,
+    @Value("\${app.attendance.max:250}") val maxAttendance: Int,
+    @Value("\${app.vaccinated.required:false}") val vaccinatedRequired: Boolean
+) : ReservationService {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -35,16 +41,14 @@ class ReservationServiceImpl(
                 "[mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city={},vaccinated={}]",
             mobileNo, email, firstName, lastName, birthday, fullAddress, city, vaccinated)
 
-        val maxAttendance = 250
-
         // Validate event
         val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
         val reservationList = reservationRepository.findByEvent(currentEvent)
 
         logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
-        if(reservationList.size >= maxAttendance) {
-            throw BusinessRuleException("Event attendance limit reached. Only $maxAttendance people are allowed.")
+        if(reservationList.size >= this.maxAttendance) {
+            throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendance} people are allowed.")
         }
 
         // Validate birthday
@@ -52,8 +56,16 @@ class ReservationServiceImpl(
         val convertedBirthday: LocalDate = LocalDate.parse(birthday, dtf)
         val age = Period.between(convertedBirthday, LocalDate.now()).years
         logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
-        if(age < 15 || age > 65) {
-            throw BusinessRuleException("Sorry, only people ages 16 to 65 are allowed.")
+        if(age < this.ageMin || age > this.ageMax) {
+            throw BusinessRuleException("Sorry, only people ages ${this.ageMin} to ${this.ageMax} are allowed.")
+        }
+
+        // Validate vaccination
+        if (vaccinatedRequired) {
+            logger.debug("reserve: (validating vaccination) [vaccinated={}]", vaccinated)
+            if (!vaccinated) {
+                throw BusinessRuleException("Sorry, only vaccinated individuals are allowed.")
+            }
         }
 
         // Add or update person
@@ -97,10 +109,7 @@ class ReservationServiceImpl(
         }
 
         // Save reservation
-        val localCurrentTime = LocalDateTime.now().plusDays(7).minusHours(1)
-        val instant: Instant = localCurrentTime.atZone(ZoneId.systemDefault()).toInstant()
-        val currentTime = instant.toEpochMilli()
-
+        val currentTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         var newReservation = Reservation(null, person, currentEvent, currentTime, null)
         newReservation = reservationRepository.save(newReservation)
         logger.info("reserve: (done - saved) {}", newReservation)
