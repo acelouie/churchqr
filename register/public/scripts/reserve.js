@@ -83,21 +83,19 @@ reservationForm.addEventListener('submit', async function(e){
 
     const formData = new FormData(reservationForm).entries();
     const formBody = JSON.stringify(Object.fromEntries(formData));
-    
-    console.log(formBody);
 
-    // var postOptions = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: formBody
-    // };
+    var postOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: formBody
+    };
 
     // 'reserve' variable found in ../settings/server.js
 
-    // var response = await fetch(reserve, postOptions);
-    // var result = await response.json();
+    var response = await fetch(reserve, postOptions);
+    var result = await response.json();
     
-    // window.location.href = "../../qr.html?" + result.id;
+    window.location.href = "../../qr.html?" + result.id;
 
     }
 
