@@ -20,7 +20,7 @@ const inputList = [
     emailInput,
     firstNameInput,
     lastNameInput,
-    birthdayInput,
+    // birthdayInput,
     fullAddressInput,
     cityInput
 ]
@@ -29,10 +29,12 @@ const inputList = [
 
 const symptoms = document.getElementById('symptomsCheckbox');
 const contact = document.getElementById('contactCheckbox');
+const vaccinated = document.getElementById('vaccinated');
 
 const checkboxList = [
     symptoms,
-    contact
+    contact,
+    vaccinated
 ]
 
 //helper texts
@@ -58,7 +60,7 @@ window.onload = function() {
     emailInput.value = null;
     firstNameInput.value = null;
     lastNameInput.value = null;
-    birthdayInput.value = null;
+    // birthdayInput.value = null;
     fullAddressInput.value = null;
     cityInput.value = null;
 
@@ -77,21 +79,25 @@ reservationForm.addEventListener('submit', async function(e){
     //If none of the fields have an invalid class, proceed posting to API
     if (validFields == true) {
 
+    vaccinated.value = true;
+
     const formData = new FormData(reservationForm).entries();
     const formBody = JSON.stringify(Object.fromEntries(formData));
+    
+    console.log(formBody);
 
-    var postOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: formBody
-    };
+    // var postOptions = {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: formBody
+    // };
 
     // 'reserve' variable found in ../settings/server.js
 
-    var response = await fetch(reserve, postOptions);
-    var result = await response.json();
+    // var response = await fetch(reserve, postOptions);
+    // var result = await response.json();
     
-    window.location.href = "../../qr.html?" + result.id;
+    // window.location.href = "../../qr.html?" + result.id;
 
     }
 
@@ -152,7 +158,7 @@ async function getPerson(no){
         emailInput.value = result.email;
         firstNameInput.value = result.firstName;
         lastNameInput.value = result.lastName;
-        birthdayInput.value = result.birthday;
+        // birthdayInput.value = result.birthday;
         fullAddressInput.value = result.fullAddress;
         cityInput.value = result.city;
         
