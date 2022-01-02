@@ -51,10 +51,6 @@ class ReservationController(private val reservationService: ReservationServiceIm
         @field:Size(max=50, message = "Last Name should not exceed 50 characters")
         val lastName: String,
 
-        /* @field:NotEmpty(message = "Birthday is required")
-        @field:DateTimeFormat(pattern = "yyyy-MM-dd")
-        val birthday: String, */
-
         @field:NotEmpty(message = "Address is required")
         @field:Size(max=255, message = "Address should not exceed to 255 characters")
         val fullAddress: String,
