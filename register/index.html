@@ -60,8 +60,8 @@
                             <span id="lastNameHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
-    
-                    <div class="row">
+
+                    <!-- <div class="row">
                         <div class="input-field col s12">
                             <input id="birthday" class="datepicker validate" name="birthday" type="text" required="required" aria-required="true"/>
                             <label for="birthday" class="active" >Birthday
@@ -69,8 +69,9 @@
                             </label>
                             <span id="birthdayHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
-                    </div>
-    
+                    </div> -->
+                    
+
                     <div class="row">
                         <div class="input-field col s12">
                             <input id="fullAddress" name="fullAddress" type="text" class="validate" required="required" aria-required="true"/>
@@ -81,16 +82,18 @@
                         </div>
                     </div>
     
+                    
                     <div class="row">
                         <div class="input-field col s12">
                             <select id="city" name="city" type="text" class="validate" required="required" aria-required="true">
                                 <option value="" disabled selected>Choose your City</option>
                             </select>
-                            <label>City <sup class="red-text"> *</sup></label>
+                            <label>City <sup class="red-text"> *</sup>
+                            </label>
                             <span id="cityHelper" class="helper-text" data-error="This field is required"></span>
                         </div>
                     </div>
-                    
+
                     <p>
                         <label>
                           <input id="symptomsCheckbox" name="symptomsCheckbox" type="checkbox" class="filled-in" required="required"/>
@@ -110,6 +113,31 @@
                           </span>
                         </label>
                     </p>
+
+                    <p>
+                        <label>
+                          <input id="vaccinated" name="vaccinated" type="checkbox" class="filled-in" required="required"/>
+                          <span>I am fully vaccinated
+                            <sup class="red-text"> *</sup>
+                          </span>
+                        </label>
+                    </p>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <p>
+                                Reminders:
+                            </p>
+                            <p>
+                                If you are experiencing any symptoms, we encourage you to just stay home and worship with us through the online service.
+                            </p>
+                            <p>
+                                Please bring your vaccination card. Only those who are fully vaccinated will be allowed to attend the F2F service
+                            </p>
+                        </div>
+                        
+                    </div>
+                    
 
                     <sup class="red-text"> * Required fields</sup>
                     <br>
