@@ -16,7 +16,7 @@ const fullAddressInput = document.getElementById('fullAddress');
 const cityInput = document.getElementById('city');
 
 const inputList = [
-    mobileNoInput, 
+    mobileNoInput,
     emailInput,
     firstNameInput,
     lastNameInput,
@@ -54,7 +54,7 @@ const valTexts = {
     phone: "Must be an 11-digit phone number"
 }
 
-window.onload = function() {
+window.onload = function () {
 
     mobileNoInput.value = null;
     emailInput.value = null;
@@ -68,10 +68,10 @@ window.onload = function() {
     getStatus();
 };
 
-reservationForm.addEventListener('submit', async function(e){
+reservationForm.addEventListener('submit', async function (e) {
 
     e.preventDefault();
-    
+
     //Checks for empty fields, see respective functions
     checkForEmptyFields();
     var validFields = validateAllFields();
@@ -79,31 +79,31 @@ reservationForm.addEventListener('submit', async function(e){
     //If none of the fields have an invalid class, proceed posting to API
     if (validFields == true) {
 
-    vaccinated.value = true;
+        vaccinated.value = true;
 
-    const formData = new FormData(reservationForm).entries();
-    const formBody = JSON.stringify(Object.fromEntries(formData));
+        const formData = new FormData(reservationForm).entries();
+        const formBody = JSON.stringify(Object.fromEntries(formData));
 
-    var postOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: formBody
-    };
+        var postOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: formBody
+        };
 
-    // 'reserve' variable found in ../settings/server.js
+        // 'reserve' variable found in ../settings/server.js
 
-    var response = await fetch(reserve, postOptions);
-    var result = await response.json();
-    
-    window.location.href = "../../qr.html?" + result.id;
+        var response = await fetch(reserve, postOptions);
+        var result = await response.json();
+
+        window.location.href = "../../qr.html?" + result.id;
 
     }
 
-    
+
 
 });
 
-async function getStatus(){
+async function getStatus() {
 
     var getOptions = {
         method: 'GET',
@@ -116,18 +116,18 @@ async function getStatus(){
     var result = await response.json();
 
     // update fields
-    if(result.message == null) {
+    if (result.message == null) {
         eventNameText.innerText = result.name;
-        if(result.status == "OPEN") {
+        if (result.status == "OPEN") {
             eventStatusText.innerHTML = "Registration is open!";
         } else {
-            eventStatusText.innerHTML = "Sorry, registration for this Sunday is already closed.<br>Please try again next week." +
-                "<p style='font-size:16px; margin: 30px auto 0px auto; font-style: italic;'>Registration opens every week after the Sunday service.</p>" +
-                "<p style='font-size:16px; margin: 20px auto 30px auto; font-style: italic;'>Registration closes every Friday by 5PM<br>or when the limit of 250 people is reached.</p>";
+            eventStatusText.innerHTML = "Sorry, registration is closed." +
+                "<p style='font-size:16px; margin: 30px auto 0px auto; font-style: italic;'>Registration for the upcoming Sunday opens every Friday from 12AM to 7PM.</p>" +
+                "<p style='font-size:16px; margin: 20px auto 30px auto; font-style: italic;'>Registration closes when the limit of 150 people is reached.</p>";
             fieldsContainer.style.display = "none";
         }
     }
-    
+
     return result;
 
 }
@@ -136,7 +136,7 @@ async function getStatus(){
 // function accepts string for mobile number
 // e.g. var mo_no = '09083909247';
 
-async function getPerson(no){
+async function getPerson(no) {
 
     const mobileNoBody = JSON.stringify(no);
 
@@ -152,21 +152,21 @@ async function getPerson(no){
 
 
     // fill fields
-    if(result.message == null) {
+    if (result.message == null) {
         emailInput.value = result.email;
         firstNameInput.value = result.firstName;
         lastNameInput.value = result.lastName;
         // birthdayInput.value = result.birthday;
         fullAddressInput.value = result.fullAddress;
         cityInput.value = result.city;
-        
+
         //changes validation colors and makes sure changes happen
         checkForEmptyFields();
         selectInit();
         focusAllFields();
         M.updateTextFields();
     }
-    
+
     return result;
 }
 
@@ -175,33 +175,33 @@ function autofill() {
     const phoneEx = /^09\d{9}$/;
 
     // Changes error message to match regex
-    if (mobileNoInput.value.match(phoneEx)){
+    if (mobileNoInput.value.match(phoneEx)) {
         getPerson(mobileNoInput.value);
         mobileNoInput.classList.remove('invalid');
         mobileNoInput.classList.add('valid');
-        
+
     } else {
         mobileNoInput.classList.remove('valid');
         mobileNoInput.classList.add('invalid');
         mobileNoHelper.dataset.error = valTexts.phone;
     }
-    
+
 }
 
 // For Validation //
 
 //Returns a boolean, used for checking if one field is empty
-function validateAllFields(){
+function validateAllFields() {
 
     var elemHelper;
     var i;
     var formInput;
 
-    for (i in inputList){
+    for (i in inputList) {
 
         formInput = inputList[i];
-        elemHelper = document.getElementById(formInput.id+"Helper");
-        if(elemHelper.classList.contains('invalid')){
+        elemHelper = document.getElementById(formInput.id + "Helper");
+        if (elemHelper.classList.contains('invalid')) {
             return false;
         }
 
@@ -221,27 +221,27 @@ function validateAllFields(){
 }
 
 //Checks if field is empty or not then changes class to "invalid" or "valid" respectively
-function checkForEmptyFields(){
-    
+function checkForEmptyFields() {
+
     var elemHelper;
     var i;
     var formInput;
 
-    for (i in inputList){
+    for (i in inputList) {
 
         formInput = inputList[i];
         formInputLabel = inputList[i].parentElement.children[1].innerText;
 
         if (formInput.value == "") {
 
-            elemHelper = document.getElementById(formInput.id+"Helper");
+            elemHelper = document.getElementById(formInput.id + "Helper");
             elemHelper.classList.remove('valid');
             elemHelper.classList.add('invalid');
             elemHelper.dataset.error = valTexts.required;
 
         } else {
 
-            elemHelper = document.getElementById(formInput.id+"Helper");
+            elemHelper = document.getElementById(formInput.id + "Helper");
             elemHelper.classList.remove('invalid');
             elemHelper.classList.add('valid');
 
@@ -249,16 +249,16 @@ function checkForEmptyFields(){
 
     }
 
-    
+
 }
 
 //Materialize.css only updates the validation color on focus
 //Instead of changing the css, this was an easier solution
-function focusAllFields(){
+function focusAllFields() {
 
     var i;
 
-    for (i in inputList){
+    for (i in inputList) {
 
         formInput = inputList[i];
         formInput.focus();
@@ -270,33 +270,33 @@ function focusAllFields(){
 $.validator.setDefaults({
     errorClass: 'invalid',
     validClass: "valid",
-    errorPlacement: function(error, element) {
-      $(element)
-        .closest("form")
-        .find("label[for='" + element.attr("id") + "']")
-        .attr('data-error', error.text());
+    errorPlacement: function (error, element) {
+        $(element)
+            .closest("form")
+            .find("label[for='" + element.attr("id") + "']")
+            .attr('data-error', error.text());
     },
-    submitHandler: function(form) {
-      console.log('form ok');
+    submitHandler: function (form) {
+        console.log('form ok');
     }
-  });
-
-  document.getElementById('city').select
-$("#reservationForm").validate({
-rules: {
-    dateField: {
-    date: true
-    }
-}
 });
 
-function cityDropdown(){
-    
+document.getElementById('city').select
+$("#reservationForm").validate({
+    rules: {
+        dateField: {
+            date: true
+        }
+    }
+});
+
+function cityDropdown() {
+
     var i;
     var cityOption;
 
-    for (i in cities){
-        
+    for (i in cities) {
+
         cityOption = document.createElement("option");
         cityOption.value = cities[i];
         cityOption.innerText = cities[i];
@@ -307,7 +307,7 @@ function cityDropdown(){
     selectInit();
 }
 
-function selectInit(){
+function selectInit() {
     var elems = document.querySelectorAll('select');
     var options = {};
     var instances = M.FormSelect.init(elems, options);
