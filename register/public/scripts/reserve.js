@@ -30,6 +30,7 @@ const inputList = [
 const symptoms = document.getElementById('symptomsCheckbox');
 const contact = document.getElementById('contactCheckbox');
 const vaccinated = document.getElementById('vaccinated');
+const volunteer = document.getElementById('volunteer');
 
 const checkboxList = [
     symptoms,
