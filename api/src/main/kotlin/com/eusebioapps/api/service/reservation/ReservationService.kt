@@ -12,7 +12,8 @@ interface ReservationService {
         birthday: String,
         fullAddress: String,
         city: String,
-        vaccinated: Boolean
+        vaccinated: Boolean,
+        volunteer: Boolean
     ) : Reservation
 
     fun scan(id: String) : Reservation

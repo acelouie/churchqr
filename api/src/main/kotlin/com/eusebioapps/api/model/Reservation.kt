@@ -26,6 +26,9 @@ data class Reservation(
     val event: Event,
 
     @NotNull
+    val volunteer: Boolean,
+
+    @NotNull
     val createdDateTime: Long,
     val scannedDateTime: Long?
 )

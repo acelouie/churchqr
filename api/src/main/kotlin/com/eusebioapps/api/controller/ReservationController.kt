@@ -30,7 +30,7 @@ class ReservationController(private val reservationService: ReservationServiceIm
         return ResponseEntity.status(HttpStatus.OK).body(
             reservationService.reserve(requestDto.mobileNo, requestDto.email,
                 requestDto.firstName, requestDto.lastName, "1992-01-01",
-                requestDto.fullAddress, requestDto.city, requestDto.vaccinated))
+                requestDto.fullAddress, requestDto.city, requestDto.vaccinated, requestDto.volunteer))
     }
 
     data class ReserveRequestDto(
@@ -60,7 +60,10 @@ class ReservationController(private val reservationService: ReservationServiceIm
         val city: String,
 
         @field:NotNull(message = "Vaccination status is required")
-        val vaccinated: Boolean
+        val vaccinated: Boolean,
+
+        @field:NotNull(message = "Volunteer status is required")
+        val volunteer: Boolean
 
     )
 

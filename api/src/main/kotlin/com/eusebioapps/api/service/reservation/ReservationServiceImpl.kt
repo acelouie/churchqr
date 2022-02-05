@@ -36,11 +36,13 @@ class ReservationServiceImpl(
         birthday: String,
         fullAddress: String,
         city: String,
-        vaccinated: Boolean
+        vaccinated: Boolean,
+        volunteer: Boolean
     ) : Reservation {
         logger.debug("reserve: (start) " +
-                "[mobileNo={},email={},firstName={},lastName={},birthday={},fullAddress={},city={},vaccinated={}]",
-            mobileNo, email, firstName, lastName, birthday, fullAddress, city, vaccinated)
+                "[mobileNo={},email={},firstName={},lastName={}," +
+                "birthday={},fullAddress={},city={},vaccinated={},volunteer={}]",
+            mobileNo, email, firstName, lastName, birthday, fullAddress, city, vaccinated, volunteer)
 
         // Validate event
         val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
@@ -113,7 +115,7 @@ class ReservationServiceImpl(
 
         // Save reservation
         val currentTime = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        var newReservation = Reservation(null, person, currentEvent, currentTime, null)
+        var newReservation = Reservation(null, person, currentEvent, volunteer, currentTime, null)
         newReservation = reservationRepository.save(newReservation)
         logger.info("reserve: (done - saved) {}", newReservation)
 
