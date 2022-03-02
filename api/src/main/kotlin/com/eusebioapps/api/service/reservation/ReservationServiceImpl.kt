@@ -45,41 +45,13 @@ class ReservationServiceImpl(
                 "birthday={},fullAddress={},city={},vaccinated={},volunteer={}]",
             mobileNo, email, firstName, lastName, birthday, fullAddress, city, vaccinated, volunteer)
 
+        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val convertedBirthday: LocalDate = LocalDate.parse(birthday, dtf)
+
         // Validate event
         val currentEvent = eventRepository.findTop1ByOrderByEventDateTimeDesc()
             ?: throw BusinessRuleException("There is no event with on-going registration. Please create a new event.")
         val reservationList = reservationRepository.findByEvent(currentEvent)
-
-        logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
-        if (volunteer) {
-            if (reservationList.count { it.volunteer } >= this.maxVolunteerAttendance) {
-                throw BusinessRuleException("Volunteer attendance limit reached. Only ${this.maxVolunteerAttendance} people are allowed.")
-            }
-        } else {
-            if(reservationList.count { !it.volunteer } >= this.maxAttendeeAttendance) {
-                throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendeeAttendance} people are allowed.")
-            }
-        }
-
-
-        // Validate birthday
-        val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val convertedBirthday: LocalDate = LocalDate.parse(birthday, dtf)
-        if (this.checkAge) {
-            val age = Period.between(convertedBirthday, LocalDate.now()).years
-            logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
-            if (age < this.ageMin || age > this.ageMax) {
-                throw BusinessRuleException("Sorry, only people ages ${this.ageMin} to ${this.ageMax} are allowed.")
-            }
-        }
-
-        // Validate vaccination
-        if (this.checkVaccinated) {
-            logger.debug("reserve: (validating vaccination) [vaccinated={}]", vaccinated)
-            if (!vaccinated) {
-                throw BusinessRuleException("Sorry, only vaccinated individuals are allowed.")
-            }
-        }
 
         // Add or update person
         val dbPerson: Person? = personRepository.findByMobileNo(mobileNo)
@@ -114,12 +86,41 @@ class ReservationServiceImpl(
             personRepository.save(newPerson)
         }
 
+        // Validate birthday
+        if (this.checkAge) {
+            val age = Period.between(convertedBirthday, LocalDate.now()).years
+            logger.debug("reserve: (validating age) [birthday={},age={}]", convertedBirthday, age)
+            if (age < this.ageMin || age > this.ageMax) {
+                throw BusinessRuleException("Sorry, only people ages ${this.ageMin} to ${this.ageMax} are allowed.")
+            }
+        }
+
+        // Validate vaccination
+        if (this.checkVaccinated) {
+            logger.debug("reserve: (validating vaccination) [vaccinated={}]", vaccinated)
+            if (!vaccinated) {
+                throw BusinessRuleException("Sorry, only vaccinated individuals are allowed.")
+            }
+        }
+
         // Validate if person is already reserved
         var existingReservation = reservationRepository.findByPersonAndEvent(person, currentEvent)
         if(existingReservation != null) {
             logger.debug("reserve: (done - has existing) [person={},event={}]", person, currentEvent)
             existingReservation = reservationRepository.save(existingReservation.copy(volunteer = volunteer))
             return existingReservation
+        }
+
+        // Validate if max attendance
+        logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
+        if (volunteer) {
+            if (reservationList.count { it.volunteer } >= this.maxVolunteerAttendance) {
+                throw BusinessRuleException("Volunteer attendance limit reached. Only ${this.maxVolunteerAttendance} people are allowed.")
+            }
+        } else {
+            if(reservationList.count { !it.volunteer } >= this.maxAttendeeAttendance) {
+                throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendeeAttendance} people are allowed.")
+            }
         }
 
         // Save reservation

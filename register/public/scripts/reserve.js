@@ -82,6 +82,12 @@ reservationForm.addEventListener('submit', async function (e) {
 
         vaccinated.value = true;
 
+        if (volunteer.checked === false || volunteer.checked === undefined) {
+            volunteer.value = false
+        } else {
+            volunteer.value = true
+        }
+
         const formData = new FormData(reservationForm).entries();
         const formBody = JSON.stringify(Object.fromEntries(formData));
 
@@ -96,7 +102,13 @@ reservationForm.addEventListener('submit', async function (e) {
         var response = await fetch(reserve, postOptions);
         var result = await response.json();
 
-        window.location.href = "../../qr.html?" + result.id;
+        if (result.id !== undefined) {
+            console.log("Redirecting to QR page....")
+            window.location.href = "../../qr.html?" + result.id;
+        } else {
+            // with error
+            window.location.href = "../../error.html?" + result.message;
+        }
 
     }
 
@@ -124,7 +136,7 @@ async function getStatus() {
         } else {
             eventStatusText.innerHTML = "Sorry, registration is closed." +
                 "<p style='font-size:16px; margin: 30px auto 0px auto; font-style: italic;'>Registration for the upcoming Sunday opens every Friday from 12AM to 7PM.</p>" +
-                "<p style='font-size:16px; margin: 20px auto 30px auto; font-style: italic;'>Registration closes when the limit of 150 people is reached.</p>";
+                "<p style='font-size:16px; margin: 20px auto 30px auto; font-style: italic;'>Registration closes when the limit of 200 people is reached.</p>";
             fieldsContainer.style.display = "none";
         }
     }
