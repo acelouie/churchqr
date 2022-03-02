@@ -56,7 +56,7 @@ class ReservationServiceImpl(
                 throw BusinessRuleException("Volunteer attendance limit reached. Only ${this.maxVolunteerAttendance} people are allowed.")
             }
         } else {
-            if(reservationList.size >= this.maxAttendeeAttendance) {
+            if(reservationList.count { !it.volunteer } >= this.maxAttendeeAttendance) {
                 throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendeeAttendance} people are allowed.")
             }
         }
@@ -115,9 +115,10 @@ class ReservationServiceImpl(
         }
 
         // Validate if person is already reserved
-        val existingReservation = reservationRepository.findByPersonAndEvent(person, currentEvent)
+        var existingReservation = reservationRepository.findByPersonAndEvent(person, currentEvent)
         if(existingReservation != null) {
             logger.debug("reserve: (done - has existing) [person={},event={}]", person, currentEvent)
+            existingReservation = reservationRepository.save(existingReservation.copy(volunteer = volunteer))
             return existingReservation
         }
 
