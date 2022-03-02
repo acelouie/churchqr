@@ -21,7 +21,8 @@ class ReservationServiceImpl(
     // configuration
     @Value("\${app.age.min:15}") val ageMin: Int,
     @Value("\${app.age.max:65}") val ageMax: Int,
-    @Value("\${app.attendance.max:250}") val maxAttendance: Int,
+    @Value("\${app.attendance.max.attendee:250}") val maxAttendeeAttendance: Int,
+    @Value("\${app.attendance.max.volunteer:250}") val maxVolunteerAttendance: Int,
     @Value("\${app.check.age:false}") val checkAge: Boolean,
     @Value("\${app.check.vaccinated:false}") val checkVaccinated: Boolean
 ) : ReservationService {
@@ -50,9 +51,16 @@ class ReservationServiceImpl(
         val reservationList = reservationRepository.findByEvent(currentEvent)
 
         logger.debug("reserve: (validating current event) [size={},event={}]", reservationList.size, currentEvent)
-        if(reservationList.size >= this.maxAttendance) {
-            throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendance} people are allowed.")
+        if (volunteer) {
+            if (reservationList.count { it.volunteer } >= this.maxVolunteerAttendance) {
+                throw BusinessRuleException("Volunteer attendance limit reached. Only ${this.maxVolunteerAttendance} people are allowed.")
+            }
+        } else {
+            if(reservationList.size >= this.maxAttendeeAttendance) {
+                throw BusinessRuleException("Event attendance limit reached. Only ${this.maxAttendeeAttendance} people are allowed.")
+            }
         }
+
 
         // Validate birthday
         val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -120,7 +128,7 @@ class ReservationServiceImpl(
         logger.info("reserve: (done - saved) {}", newReservation)
 
         // If reservation reached max attendance after saving, close event
-        if(reservationList.size + 1 >= maxAttendance) {
+        if(reservationList.size + 1 >= this.maxAttendeeAttendance + this.maxVolunteerAttendance) {
             val savedEvent = eventRepository.save(currentEvent.copy(status = EventStatus.CLOSED))
             logger.info("reserve: (max attendance) Closing event. [size={}, event={}]", reservationList.size + 1, savedEvent)
         }
