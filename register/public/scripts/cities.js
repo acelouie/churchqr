@@ -111,6 +111,7 @@ const cities = [
     "San Jose City",
     "San Jose del Monte City",
     "San Juan City",
+    "San Mateo",
     "San Pablo City",
     "San Pedro City",
     "Santa Rosa City",
