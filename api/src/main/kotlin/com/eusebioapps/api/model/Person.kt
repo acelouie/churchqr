@@ -26,7 +26,7 @@ data class Person(
     val mobileNo: String,
 
     @NotNull
-    @Column(unique=true, length=100)
+    @Column(length=100)
     @Size(min=1, max=100)
     @Email
     val email: String,
