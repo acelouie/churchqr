@@ -135,7 +135,7 @@ async function getStatus() {
             eventStatusText.innerHTML = "Registration is open!";
         } else {
             eventStatusText.innerHTML = "Sorry, registration is closed." +
-                "<p style='font-size:16px; margin: 30px auto 0px auto; font-style: italic;'>Registration for the upcoming Sunday opens every Friday from 12AM to 7PM.</p>" +
+                "<p style='font-size:16px; margin: 30px auto 0px auto; font-style: italic;'>Registration for the upcoming Sunday opens every Friday.</p>" +
                 "<p style='font-size:16px; margin: 20px auto 30px auto; font-style: italic;'>Registration closes when the limit of 200 people is reached.</p>";
             fieldsContainer.style.display = "none";
         }
