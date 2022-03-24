@@ -34,8 +34,7 @@ const volunteer = document.getElementById('volunteer');
 
 const checkboxList = [
     symptoms,
-    contact,
-    vaccinated
+    contact
 ]
 
 //helper texts
@@ -81,12 +80,7 @@ reservationForm.addEventListener('submit', async function (e) {
     if (validFields == true) {
 
         vaccinated.value = true;
-
-        if (volunteer.checked === false || volunteer.checked === undefined) {
-            volunteer.value = false
-        } else {
-            volunteer.value = true
-        }
+        volunteer.value = false;
 
         const formData = new FormData(reservationForm).entries();
         const formBody = JSON.stringify(Object.fromEntries(formData));
