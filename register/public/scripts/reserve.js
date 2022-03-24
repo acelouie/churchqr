@@ -79,11 +79,14 @@ reservationForm.addEventListener('submit', async function (e) {
     //If none of the fields have an invalid class, proceed posting to API
     if (validFields == true) {
 
-        vaccinated.value = true;
-        volunteer.value = false;
-
         const formData = new FormData(reservationForm).entries();
+
+        formData.vaccinated = true
+        formData.volunteer = false
+
         const formBody = JSON.stringify(Object.fromEntries(formData));
+
+
 
         var postOptions = {
             method: 'POST',
